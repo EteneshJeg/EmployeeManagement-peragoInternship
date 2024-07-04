@@ -1,22 +1,20 @@
-import { MantineProvider } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import "./App.css";
-import "./index.css";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./store/store"; // Ensure store configuration is correct
+import HomePage from "./pages/HomePage";
 
-function App() {
-    const form = useForm({
-      initialValues: {
-        name: "",
-        email: "",
-      },
-    });
+const App: React.FC = () => {
   return (
-    <MantineProvider>
-      <div>
-        Hello World!
-      </div>
-    </MantineProvider>
+    <Provider store={store}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          {/* Add more routes as needed */}
+        </Routes>
+      </Router>
+    </Provider>
   );
-}
+};
 
 export default App;
