@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { collection, addDoc, getDocs, query, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { RootState } from './store'; // Adjust the path according to your actual Redux store setup
 
 interface Position {
   id: string;
   name: string;
   description: string;
-  parentId: number | null;
+  parentId: string | null;
 }
 
 interface PositionState {
@@ -21,6 +22,7 @@ const initialState: PositionState = {
   error: null,
 };
 
+// Async Thunks
 export const fetchPositions = createAsyncThunk('positions/fetchPositions', async () => {
   const q = query(collection(db, 'positions'));
   const querySnapshot = await getDocs(q);
@@ -41,8 +43,6 @@ export const updatePositionAsync = createAsyncThunk('positions/updatePositionAsy
   const { id, ...data } = position;
   const positionRef = doc(db, 'positions', id);
   await updateDoc(positionRef, data);
-  console.log(position);
-
   return position;
 });
 
@@ -52,6 +52,11 @@ export const deletePositionAsync = createAsyncThunk('positions/deletePositionAsy
   return id;
 });
 
+// Selectors
+export const selectPositions = (state: RootState) => state.positions.positions;
+export const selectStatus = (state: RootState) => state.positions.status;
+
+// Slice definition
 export const positionSlice = createSlice({
   name: 'positions',
   initialState,
@@ -108,6 +113,7 @@ export const positionSlice = createSlice({
   },
 });
 
+// Export reducer and actions
 export default positionSlice.reducer;
 export const positionsApi = {
   reducer: positionSlice.reducer,

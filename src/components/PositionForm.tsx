@@ -1,3 +1,4 @@
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { addPositionAsync, updatePositionAsync } from '../store/positionSlice';
@@ -10,27 +11,32 @@ export interface PositionFormProps {
     id: string;
     name: string;
     description: string;
-    parentId: number | null;
+    parentId: string | null;
   };
-  onSave: () => void;
+  parentId?: string | null;
+  onSave: (data: PositionFormData) => void;
+  onCancel: () => void; // Ensure onCancel is included in props
 }
 
-interface PositionFormData {
+export interface PositionFormData {
   name: string;
   description: string;
-  parentId: number | null;
+  parentId: string | null;
 }
 
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
   description: yup.string().required('Description is required'),
-  parentId: yup.number().nullable(),
 });
 
-const PositionForm: React.FC<PositionFormProps> = ({ position, onSave }) => {
+const generateUniqueId = (): string => {
+  return "id-" + Math.random().toString(36).substr(2, 9);
+};
+
+const PositionForm: React.FC<PositionFormProps> = ({ position, parentId, onSave, onCancel }) => {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<PositionFormData>({
     resolver: yupResolver(schema),
-    defaultValues: position || { name: '', description: '', parentId: null }
+    defaultValues: position || { name: '', description: '', parentId: parentId || null }
   });
   const dispatch = useDispatch();
 
@@ -38,10 +44,16 @@ const PositionForm: React.FC<PositionFormProps> = ({ position, onSave }) => {
     if (position) {
       dispatch(updatePositionAsync({ ...data, id: position.id }));
     } else {
-      dispatch(addPositionAsync({ ...data }));
+      const newPosition = { ...data, id: generateUniqueId(), parentId: parentId || null };
+      dispatch(addPositionAsync(newPosition));
     }
-    onSave();
+    onSave(data); // Pass data to onSave
     reset(); // Reset the form after submission
+  };
+
+  const handleCancel = () => {
+    reset(); // Reset form values
+    onCancel(); // Call onCancel to handle cancellation
   };
 
   return (
@@ -73,24 +85,12 @@ const PositionForm: React.FC<PositionFormProps> = ({ position, onSave }) => {
           }}
         />
         {errors.description && <p className="text-red-500">{errors.description.message}</p>}
-      </div>
-      <div>
-        <TextInput
-          label="Parent ID"
-          placeholder="Enter parent ID"
-          type="number"
-          {...register('parentId')}
-          error={errors.parentId?.message}
-          classNames={{
-            root: 'space-y-1',
-            input: 'w-full',
-            error: 'border-red-500',
-          }}
-        />
-        {errors.parentId && <p className="text-red-500">{errors.parentId.message}</p>}
-      </div>
-      <Group position="right">
-        <Button type="submit" className="mt-2" variant="outline">Add Employee</Button>
+      </div>       
+      <Group align="right">
+        <Button type="submit" className="mt-2" variant="outline">Save</Button>
+        <Button onClick={handleCancel} variant="outline" className="mt-2">
+          Cancel
+        </Button>
       </Group>
     </form>
   );

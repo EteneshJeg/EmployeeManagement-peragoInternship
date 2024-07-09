@@ -10,6 +10,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          
           {/* Add more routes as needed */}
         </Routes>
       </Router>

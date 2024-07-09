@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { Provider } from "react-redux";
+import { MantineProvider } from "@mantine/core";
 import store from "./store/store";
 
 const containerElement = document.getElementById("root");
@@ -12,7 +13,13 @@ if (containerElement) {
 
   root.render(
     <Provider store={store}>
-      <App />
+      <MantineProvider
+        // theme={{ colorScheme: "light" }}
+        // withGlobalStyles
+        // withNormalizeCSS
+      >
+        <App />
+      </MantineProvider>
     </Provider>
   );
 } else {

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import positionReducer from './positionSlice'; // Adjust the import path as necessary
-import { positionsApi } from './positionSlice'; // Assuming positionsApi.middleware is used
+// import { positionsApi } from './positionSlice'; // Assuming positionsApi.middleware is used
 
 const store = configureStore({
   reducer: {

@@ -7,6 +7,7 @@ interface Post {
   name: string;
   description: string;
   parentId: string | null;
+  profile:File;
 }
 
 const COLLECTION_NAME = "posts";
